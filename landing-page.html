@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MIRATTI — Invitation Privée</title>
+  <meta name="theme-color" content="#0B0B0B" />
+  <style>
+    :root{
+      --bg:#0B0B0B;
+      --fg:#FFFFFF;
+      --muted:#B5B5B5;
+      --gold:#C6A75E;
+      --card:#0F0F0F;
+      --border:rgba(198,167,94,.55);
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 50% -10%, rgba(198,167,94,.12), transparent 60%),
+                  radial-gradient(900px 700px at 80% 110%, rgba(255,255,255,.06), transparent 55%),
+                  var(--bg);
+      color:var(--fg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .shell{
+      width:min(420px, 100%);
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius:28px;
+      padding:28px 22px 24px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .shell:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius:28px;
+      background: radial-gradient(600px 300px at 50% 0%, rgba(198,167,94,.12), transparent 65%);
+      pointer-events:none;
+    }
+
+    header{
+      text-align:center;
+      padding:6px 0 18px;
+      position:relative;
+      z-index:1;
+    }
+
+    .brand{
+      font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
+      letter-spacing:.22em;
+      font-weight:600;
+      font-size:14px;
+      opacity:.95;
+    }
+
+    main{
+      text-align:center;
+      position:relative;
+      z-index:1;
+      padding:8px 4px 0;
+    }
+
+    h1{
+      margin:12px 0 22px;
+      font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
+      font-size:28px;
+      line-height:1.22;
+      font-weight:500;
+      letter-spacing:.01em;
+    }
+
+    .cta{
+      width:100%;
+      border-radius:16px;
+      padding:14px 16px;
+      font-size:15px;
+      letter-spacing:.02em;
+      font-weight:600;
+      border:1px solid var(--border);
+      background: rgba(15,15,15,.55);
+      color:var(--fg);
+      cursor:pointer;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cta:hover{ border-color: rgba(198,167,94,.85); background: rgba(15,15,15,.7); }
+    .cta:active{ transform: scale(.99); }
+
+    .note{
+      margin:18px auto 0;
+      max-width:320px;
+      font-size:13px;
+      line-height:1.5;
+      color:var(--muted);
+    }
+
+    .divider{
+      margin:22px auto 16px;
+      width:64px;
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(198,167,94,.8), transparent);
+      opacity:.8;
+    }
+
+    .footer{
+      text-align:center;
+      color:rgba(255,255,255,.55);
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-top:10px;
+      position:relative;
+      z-index:1;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      background: rgba(15,15,15,.9);
+      color: var(--fg);
+      border:1px solid rgba(255,255,255,.12);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(-4px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell" role="application" aria-label="MIRATTI Invitation Privée">
+    <header>
+      <div class="brand">MIRATTI</div>
+    </header>
+
+    <main>
+      <h1>Inviter quelqu’un<br>à découvrir Miratti</h1>
+
+      <button class="cta" id="shareBtn" type="button">
+        Partager mon lien
+      </button>
+
+      <p class="note">
+        Votre invité bénéficie de –10&nbsp;%.<br>
+        En cas d’achat, vous êtes récompensé.
+      </p>
+
+      <div class="divider" aria-hidden="true"></div>
+      <div class="footer">Accès privé — Miratti</div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+
+  <script>
+    // --- CONFIG (à adapter) ---
+    // Remplace par ton URL réelle + identifiant client (si tu veux tracker)
+    const REFERRAL_URL = "https://miratti.com/invite?ref=CLIENT123";
+    const SHARE_TITLE  = "MIRATTI — Invitation Privée";
+    const SHARE_TEXT   = "Je t’introduis chez MIRATTI. Profite de –10% sur ton premier achat via ce lien :";
+
+    // --- Helpers ---
+    const toast = (msg) => {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(window.__t);
+      window.__t = setTimeout(() => el.classList.remove("show"), 2200);
+    };
+
+    const copyToClipboard = async (text) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (_) {
+        // Fallback old-school
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      }
+    };
+
+    // --- Main action ---
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      const payload = {
+        title: SHARE_TITLE,
+        text: `${SHARE_TEXT}\n${REFERRAL_URL}`,
+        url: REFERRAL_URL
+      };
+
+      // 1) Native share on mobile (best premium UX)
+      if (navigator.share) {
+        try {
+          await navigator.share(payload);
+          toast("Lien partagé.");
+          return;
+        } catch (e) {
+          // user cancelled or error -> fallback copy
+        }
+      }
+
+      // 2) Fallback: copy link
+      const ok = await copyToClipboard(REFERRAL_URL);
+      toast(ok ? "Lien copié." : "Impossible de copier le lien.");
+    });
+  </script>
+</body>
+</html>

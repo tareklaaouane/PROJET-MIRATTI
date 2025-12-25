@@ -3,200 +3,653 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MIRATTI — Invitation Privée</title>
+  <title>MIRATTI — Sacs & Wallets</title>
   <meta name="theme-color" content="#0B0B0B" />
+
   <style>
     :root{
-      --bg:#0B0B0B;
-      --fg:#FFFFFF;
-      --muted:#B5B5B5;
+      --bg:#070707;
+      --bg2:#0B0B0B;
+      --fg:#F6F2E9;         /* blanc chaud */
+      --muted:#B7B0A3;
       --gold:#C6A75E;
-      --card:#0F0F0F;
-      --border:rgba(198,167,94,.55);
-      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --gold2:#E2C77C;
+      --line:rgba(246,242,233,.10);
+      --card:rgba(255,255,255,.03);
+      --shadow: 0 24px 90px rgba(0,0,0,.65);
+      --radius: 22px;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(1200px 800px at 50% -10%, rgba(198,167,94,.12), transparent 60%),
-                  radial-gradient(900px 700px at 80% 110%, rgba(255,255,255,.06), transparent 55%),
-                  var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--fg);
+      background:
+        radial-gradient(900px 600px at 20% -10%, rgba(198,167,94,.18), transparent 60%),
+        radial-gradient(800px 500px at 80% 10%, rgba(226,199,124,.10), transparent 55%),
+        radial-gradient(900px 650px at 70% 120%, rgba(246,242,233,.07), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    a{ color:inherit; text-decoration:none }
+    .container{ width:min(1120px, 100%); margin:0 auto; padding:0 20px; }
+
+    /* Subtle film grain */
+    .grain{
+      pointer-events:none;
+      position:fixed; inset:0;
+      background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" stitchTiles="stitch"/></filter><rect width="180" height="180" filter="url(%23n)" opacity=".16"/></svg>');
+      mix-blend-mode:overlay;
+      opacity:.20;
+      z-index:0;
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(10px);
+      background: rgba(7,7,7,.55);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner{
       display:flex;
       align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-
-    .shell{
-      width:min(420px, 100%);
-      border:1px solid rgba(255,255,255,.08);
-      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      border-radius:28px;
-      padding:28px 22px 24px;
-      box-shadow:var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .shell:before{
-      content:"";
-      position:absolute;
-      inset:-2px;
-      border-radius:28px;
-      background: radial-gradient(600px 300px at 50% 0%, rgba(198,167,94,.12), transparent 65%);
-      pointer-events:none;
-    }
-
-    header{
-      text-align:center;
-      padding:6px 0 18px;
-      position:relative;
-      z-index:1;
+      justify-content:space-between;
+      padding:16px 0;
     }
 
     .brand{
       font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
-      letter-spacing:.22em;
+      letter-spacing:.28em;
       font-weight:600;
       font-size:14px;
-      opacity:.95;
+      text-transform:uppercase;
     }
 
-    main{
-      text-align:center;
+    .nav{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      color:rgba(246,242,233,.80);
+      font-size:13px;
+      letter-spacing:.04em;
+    }
+    .nav a{ padding:10px 10px; border-radius:999px; transition: background .2s ease, color .2s ease; }
+    .nav a:hover{ background: rgba(198,167,94,.10); color:var(--fg); }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(198,167,94,.38);
+      background: rgba(255,255,255,.02);
+      color:var(--fg);
+      font-size:13px;
+      letter-spacing:.03em;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      cursor:pointer;
+    }
+    .pill:hover{ border-color: rgba(198,167,94,.70); background: rgba(198,167,94,.08); }
+    .pill:active{ transform: scale(.99); }
+
+    /* Hero */
+    .hero{
       position:relative;
       z-index:1;
-      padding:8px 4px 0;
+      padding:64px 0 42px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:26px;
+      align-items:stretch;
+    }
+
+    .hero-card{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius: var(--radius);
+      padding:34px 28px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card:before{
+      content:"";
+      position:absolute; inset:-2px;
+      border-radius: var(--radius);
+      background:
+        radial-gradient(680px 260px at 20% 0%, rgba(198,167,94,.18), transparent 55%),
+        radial-gradient(520px 240px at 90% 20%, rgba(226,199,124,.10), transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .hero-card > *{ position:relative; z-index:1; }
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      color:rgba(246,242,233,.78);
+      font-size:12px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+    }
+    .dot{
+      width:6px; height:6px;
+      border-radius:99px;
+      background: radial-gradient(circle at 30% 30%, var(--gold2), var(--gold));
+      box-shadow: 0 0 0 3px rgba(198,167,94,.14);
     }
 
     h1{
-      margin:12px 0 22px;
+      margin:16px 0 14px;
       font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
-      font-size:28px;
-      line-height:1.22;
       font-weight:500;
+      font-size:40px;
+      line-height:1.08;
       letter-spacing:.01em;
     }
 
-    .cta{
-      width:100%;
-      border-radius:16px;
-      padding:14px 16px;
+    .lead{
+      margin:0;
+      color:rgba(246,242,233,.78);
       font-size:15px;
-      letter-spacing:.02em;
-      font-weight:600;
-      border:1px solid var(--border);
-      background: rgba(15,15,15,.55);
+      line-height:1.65;
+      max-width:52ch;
+    }
+
+    .hero-actions{
+      margin-top:22px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:14px;
+      border:1px solid rgba(198,167,94,.48);
+      background: rgba(198,167,94,.10);
       color:var(--fg);
+      font-size:14px;
+      letter-spacing:.02em;
       cursor:pointer;
       transition: transform .08s ease, border-color .2s ease, background .2s ease;
-      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+    .btn:hover{ border-color: rgba(198,167,94,.85); background: rgba(198,167,94,.16); }
+    .btn:active{ transform: scale(.99); }
+
+    .btn.secondary{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color:rgba(246,242,233,.86);
+    }
+    .btn.secondary:hover{
+      border-color: rgba(246,242,233,.20);
+      background: rgba(255,255,255,.04);
+      color:var(--fg);
     }
 
-    .cta:hover{ border-color: rgba(198,167,94,.85); background: rgba(15,15,15,.7); }
-    .cta:active{ transform: scale(.99); }
+    .hero-visual{
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-height: 330px;
+    }
+    .hero-visual:before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(520px 320px at 50% 10%, rgba(198,167,94,.25), transparent 60%),
+        radial-gradient(520px 340px at 50% 110%, rgba(226,199,124,.08), transparent 60%),
+        linear-gradient(180deg, rgba(7,7,7,.0), rgba(7,7,7,.75));
+      pointer-events:none;
+      z-index:2;
+    }
+    .visual-inner{
+      position:absolute; inset:0;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:22px;
+      z-index:1;
+    }
 
-    .note{
-      margin:18px auto 0;
-      max-width:320px;
+    /* Product hero placeholders */
+    .art{
+      width:min(360px, 92%);
+      aspect-ratio: 4/3;
+      border-radius: 26px;
+      border:1px solid rgba(198,167,94,.38);
+      background:
+        radial-gradient(160px 120px at 25% 20%, rgba(226,199,124,.25), transparent 60%),
+        radial-gradient(220px 160px at 70% 40%, rgba(198,167,94,.16), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
+      box-shadow: 0 22px 80px rgba(0,0,0,.55);
+      position:relative;
+      overflow:hidden;
+    }
+    .art:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(110deg, transparent 35%, rgba(226,199,124,.22), transparent 55%);
+      transform: rotate(8deg);
+      animation: sheen 7.5s ease-in-out infinite;
+      opacity:.9;
+    }
+    @keyframes sheen{
+      0%, 55% { transform: translateX(-20%) rotate(8deg); opacity:.0; }
+      65%     { opacity:.9; }
+      100%    { transform: translateX(35%) rotate(8deg); opacity:0; }
+    }
+
+    .art-label{
+      position:absolute;
+      left:16px; bottom:14px;
+      font-size:12px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      color:rgba(246,242,233,.80);
+      display:flex; align-items:center; gap:10px;
+    }
+    .mini-line{
+      width:26px; height:1px;
+      background: linear-gradient(90deg, rgba(198,167,94,.0), rgba(198,167,94,.95));
+      opacity:.9;
+    }
+
+    /* Sections */
+    section{
+      position:relative;
+      z-index:1;
+      padding:34px 0 16px;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:18px;
+      padding:8px 0 18px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:18px;
+    }
+    .section-title{
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      font-weight:500;
+      font-size:22px;
+      letter-spacing:.01em;
+      margin:0;
+    }
+    .section-sub{
+      margin:0;
+      color:rgba(246,242,233,.72);
       font-size:13px;
-      line-height:1.5;
-      color:var(--muted);
+      max-width:56ch;
+      line-height:1.6;
     }
 
-    .divider{
-      margin:22px auto 16px;
-      width:64px;
-      height:1px;
-      background: linear-gradient(90deg, transparent, rgba(198,167,94,.8), transparent);
-      opacity:.8;
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:16px;
     }
 
-    .footer{
-      text-align:center;
-      color:rgba(255,255,255,.55);
-      font-size:11px;
+    .card{
+      border:1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      overflow:hidden;
+      transition: transform .15s ease, border-color .2s ease, background .2s ease;
+      box-shadow: 0 18px 55px rgba(0,0,0,.45);
+      position:relative;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(198,167,94,.40);
+      background: linear-gradient(180deg, rgba(198,167,94,.07), rgba(255,255,255,.01));
+    }
+
+    .thumb{
+      height: 190px;
+      background:
+        radial-gradient(220px 160px at 30% 20%, rgba(226,199,124,.25), transparent 60%),
+        radial-gradient(220px 180px at 70% 40%, rgba(198,167,94,.15), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01));
+      border-bottom:1px solid rgba(246,242,233,.08);
+      position:relative;
+    }
+    .thumb:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(110deg, transparent 35%, rgba(226,199,124,.18), transparent 55%);
+      transform: rotate(8deg);
+      opacity:.55;
+    }
+
+    .card-body{ padding:14px 14px 16px; }
+    .name{
+      margin:0 0 6px;
+      font-size:14px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:rgba(246,242,233,.92);
+    }
+    .meta{
+      margin:0 0 12px;
+      font-size:13px;
+      color:rgba(246,242,233,.70);
+      line-height:1.55;
+    }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .price{
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      font-size:16px;
+      color: var(--gold2);
+      letter-spacing:.02em;
+    }
+    .smallbtn{
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(198,167,94,.40);
+      background: rgba(198,167,94,.08);
+      color:var(--fg);
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .smallbtn:hover{ border-color: rgba(198,167,94,.80); background: rgba(198,167,94,.14); }
+    .smallbtn:active{ transform: scale(.99); }
+
+    /* CTA band */
+    .cta-band{
+      margin:38px 0 44px;
+      border-radius: 26px;
+      border:1px solid rgba(198,167,94,.35);
+      background:
+        radial-gradient(620px 220px at 30% 0%, rgba(198,167,94,.18), transparent 60%),
+        radial-gradient(620px 240px at 80% 20%, rgba(226,199,124,.10), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      padding:22px 18px;
+      position:relative;
+    }
+    .cta-band:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(520px 240px at 50% 0%, rgba(226,199,124,.18), transparent 65%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .cta-band-inner{
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .cta-band h3{
+      margin:0;
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      font-weight:500;
+      letter-spacing:.01em;
+      font-size:18px;
+    }
+    .cta-band p{
+      margin:6px 0 0;
+      color:rgba(246,242,233,.72);
+      font-size:13px;
+      line-height:1.6;
+      max-width:60ch;
+    }
+
+    footer{
+      border-top: 1px solid var(--line);
+      padding:18px 0 26px;
+      color: rgba(246,242,233,.55);
+      font-size:12px;
       letter-spacing:.08em;
       text-transform:uppercase;
-      margin-top:10px;
       position:relative;
       z-index:1;
     }
 
-    .toast{
-      position:fixed;
-      left:50%;
-      bottom:22px;
-      transform:translateX(-50%);
-      background: rgba(15,15,15,.9);
-      color: var(--fg);
-      border:1px solid rgba(255,255,255,.12);
-      padding:10px 12px;
-      border-radius:14px;
-      font-size:13px;
-      box-shadow: 0 16px 40px rgba(0,0,0,.55);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
+    /* Responsive */
+    @media (max-width: 920px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      h1{ font-size:34px; }
+      .hero-visual{ min-height: 280px; }
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
-    .toast.show{
-      opacity:1;
-      transform:translateX(-50%) translateY(-4px);
+    @media (max-width: 560px){
+      .nav{ display:none; }
+      h1{ font-size:30px; }
+      .grid{ grid-template-columns: 1fr; }
+      .hero{ padding-top:44px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="shell" role="application" aria-label="MIRATTI Invitation Privée">
-    <header>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="container topbar-inner">
       <div class="brand">MIRATTI</div>
-    </header>
 
-    <main>
-      <h1>Inviter quelqu’un<br>à découvrir Miratti</h1>
+      <nav class="nav" aria-label="Navigation">
+        <a href="#bags">Sacs</a>
+        <a href="#wallets">Wallets</a>
+        <a href="#private">Accès privé</a>
+      </nav>
+      <a href="landing-page.html" class="pill" aria-label="Accéder à l’invitation privée">
+  <span class="dot" aria-hidden="true"></span>
+  Invitation privée
+</a>
 
-      <button class="cta" id="shareBtn" type="button">
-        Partager mon lien
-      </button>
-
-      <p class="note">
-        Votre invité bénéficie de –10&nbsp;%.<br>
-        En cas d’achat, vous êtes récompensé.
-      </p>
-
-      <div class="divider" aria-hidden="true"></div>
-      <div class="footer">Accès privé — Miratti</div>
-    </main>
+    </div>
   </div>
 
-  <div class="toast" id="toast" aria-live="polite"></div>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <div class="kicker"><span class="dot"></span> Maison — Sacs & Wallets</div>
+          <h1>Or. Noir. <br>Silence. Désir.</h1>
+          <p class="lead">
+            Des pièces pensées comme des signatures : lignes nettes, matières nobles,
+            finitions impeccables. MIRATTI ne s’explique pas — elle se remarque.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn" href="#bags">Découvrir les sacs</a>
+            <a class="btn secondary" href="#wallets">Voir les wallets</a>
+          </div>
+        </div>
+
+        <div class="hero-visual" role="img" aria-label="Visuel premium MIRATTI">
+          <div class="visual-inner">
+            <div class="art">
+              <div class="art-label">
+                <span class="mini-line"></span>
+                Édition Signature
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CTA band -->
+      <div class="cta-band" id="private">
+        <div class="cta-band-inner">
+          <div>
+            <h3>Accès privé MIRATTI</h3>
+            <p>
+              Votre invité bénéficie de –10 %. En cas d’achat, vous êtes récompensé.
+              Une mécanique simple — une expérience premium.
+            </p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" id="shareBtn" type="button">Partager mon lien</button>
+            <button class="btn secondary" id="copyBtn" type="button">Copier le lien</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- BAGS -->
+  <section id="bags">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Sacs</h2>
+          <p class="section-sub">Silhouette structurée. Détails discrets. Présence immédiate.</p>
+        </div>
+        <div class="kicker"><span class="dot"></span> Collection</div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="card-body">
+            <p class="name">Signature Tote</p>
+            <p class="meta">Cuir pleine fleur, finitions dorées, volume essentiel.</p>
+            <div class="row">
+              <span class="price">—</span>
+              <button class="smallbtn" type="button">Voir la pièce</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="card-body">
+            <p class="name">Noir Atelier</p>
+            <p class="meta">Ligne épurée, fermeture invisible, élégance ferme.</p>
+            <div class="row">
+              <span class="price">—</span>
+              <button class="smallbtn" type="button">Voir la pièce</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="card-body">
+            <p class="name">Evening Curve</p>
+            <p class="meta">Format soirée, port main, signature dorée discrète.</p>
+            <div class="row">
+              <span class="price">—</span>
+              <button class="smallbtn" type="button">Voir la pièce</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- WALLETS -->
+  <section id="wallets">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Wallets</h2>
+          <p class="section-sub">Compacts, précis, impeccables. Le luxe tient dans la paume.</p>
+        </div>
+        <div class="kicker"><span class="dot"></span> Essentiels</div>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="card-body">
+            <p class="name">Card Wallet</p>
+            <p class="meta">Minimal, couture fine, accès rapide, signature MIRATTI.</p>
+            <div class="row">
+              <span class="price">—</span>
+              <button class="smallbtn" type="button">Voir la pièce</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="card-body">
+            <p class="name">Zip Wallet</p>
+            <p class="meta">Fermeture zippée, compartiments nets, finition or.</p>
+            <div class="row">
+              <span class="price">—</span>
+              <button class="smallbtn" type="button">Voir la pièce</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="card-body">
+            <p class="name">Long Wallet</p>
+            <p class="meta">Format long, tenue parfaite, présence luxueuse.</p>
+            <div class="row">
+              <span class="price">—</span>
+              <button class="smallbtn" type="button">Voir la pièce</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      MIRATTI — Maison • Or & Noir • Accès privé
+    </div>
+  </footer>
 
   <script>
-    // --- CONFIG (à adapter) ---
-    // Remplace par ton URL réelle + identifiant client (si tu veux tracker)
+    // --- CONFIG ---
     const REFERRAL_URL = "https://miratti.com/invite?ref=CLIENT123";
     const SHARE_TITLE  = "MIRATTI — Invitation Privée";
     const SHARE_TEXT   = "Je t’introduis chez MIRATTI. Profite de –10% sur ton premier achat via ce lien :";
 
-    // --- Helpers ---
-    const toast = (msg) => {
-      const el = document.getElementById("toast");
-      el.textContent = msg;
-      el.classList.add("show");
-      clearTimeout(window.__t);
-      window.__t = setTimeout(() => el.classList.remove("show"), 2200);
-    };
-
     const copyToClipboard = async (text) => {
       try {
         await navigator.clipboard.writeText(text);
+        toast("Lien copié.");
         return true;
       } catch (_) {
-        // Fallback old-school
         const ta = document.createElement("textarea");
         ta.value = text;
         ta.setAttribute("readonly", "");
@@ -206,33 +659,52 @@
         ta.select();
         const ok = document.execCommand("copy");
         document.body.removeChild(ta);
+        toast(ok ? "Lien copié." : "Impossible de copier le lien.");
         return ok;
       }
     };
 
-    // --- Main action ---
-    document.getElementById("shareBtn").addEventListener("click", async () => {
+    const toast = (msg) => {
+      let el = document.getElementById("toast");
+      if(!el){
+        el = document.createElement("div");
+        el.id="toast";
+        el.style.cssText = `
+          position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+          background: rgba(15,15,15,.92); color: #F6F2E9;
+          border:1px solid rgba(255,255,255,.12); padding:10px 12px;
+          border-radius:14px; font-size:13px; box-shadow: 0 16px 40px rgba(0,0,0,.55);
+          opacity:0; pointer-events:none; transition: opacity .18s ease, transform .18s ease;
+          z-index:999;
+        `;
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = "1";
+      el.style.transform = "translateX(-50%) translateY(-4px)";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => {
+        el.style.opacity = "0";
+        el.style.transform = "translateX(-50%)";
+      }, 2100);
+    };
+
+    const share = async () => {
       const payload = {
         title: SHARE_TITLE,
         text: `${SHARE_TEXT}\n${REFERRAL_URL}`,
         url: REFERRAL_URL
       };
-
-      // 1) Native share on mobile (best premium UX)
       if (navigator.share) {
-        try {
-          await navigator.share(payload);
-          toast("Lien partagé.");
-          return;
-        } catch (e) {
-          // user cancelled or error -> fallback copy
-        }
+        try { await navigator.share(payload); toast("Lien partagé."); return; }
+        catch(_) { /* cancel -> fallback */ }
       }
+      await copyToClipboard(REFERRAL_URL);
+    };
 
-      // 2) Fallback: copy link
-      const ok = await copyToClipboard(REFERRAL_URL);
-      toast(ok ? "Lien copié." : "Impossible de copier le lien.");
-    });
+    document.getElementById("shareBtn").addEventListener("click", share);
+    document.getElementById("inviteBtn").addEventListener("click", share);
+    document.getElementById("copyBtn").addEventListener("click", () => copyToClipboard(REFERRAL_URL));
   </script>
 </body>
 </html>
